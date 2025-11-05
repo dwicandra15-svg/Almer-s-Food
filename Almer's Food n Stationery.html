@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Almer’s Food n Beverages</title>
+
+  <!-- Libraries for export -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #002B5B;
+      --secondary: #F77F00;
+      --light: #f6f9fc;
+      --text: #333;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: var(--light);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 15px 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.25);
+    }
+
+    header img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto 10px;
+      border: 3px solid var(--secondary);
+      object-fit: cover;
+      background: white;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      margin: 0;
+      letter-spacing: 1px;
+      color: var(--secondary);
+    }
+
+    main {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+      padding: 18px;
+      margin-bottom: 20px;
+    }
+
+    .menu {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .menu button, button.action {
+      background: var(--secondary);
+      color: white;
+      font-size: 1.05em;
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease;
+      font-weight: 700;
+    }
+    .menu button:hover, button.action:hover { transform: scale(1.03); background: #e56e00; }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.95em;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .delete-btn {
+      background: #d00000;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .saldo {
+      text-align: center;
+      font-size: 1.15em;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 14px;
+    }
+
+    .hidden { display: none; }
+
+    /* WhatsApp floating */
+    .whatsapp-float {
+      position: fixed;
+      width: 58px;
+      height: 58px;
+      bottom: 18px;
+      right: 18px;
+      background-color: #25D366;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 28px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.25);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .whatsapp-float:hover { transform: scale(1.08); background-color: #1ebe57; }
+
+    footer { text-align:center; color:#666; font-size:0.85rem; margin: 30px 0; }
+    @media (max-width:520px) {
+      header img { width:76px; height:76px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <!-- Put logo-almers.png in same folder -->
+    <img src="logo-almers.png" alt="Almer's Food n Beverages Logo" id="site-logo">
+    <h1>Almer’s Food n Beverages</h1>
+  </header>
+
+  <main>
+    <!-- Dashboard -->
+    <section id="dashboard" class="card">
+      <h2>Dashboard</h2>
+      <div class="menu">
+        <button onclick="showPage('pembelian')">🛒 Pembelian Bahan</button>
+        <button onclick="showPage('penjualan')">🍱 Penjualan</button>
+        <button onclick="showPage('saldo')">💰 Saldo & Riwayat</button>
+        <button onclick="showPage('laporan')">📊 Laporan</button>
+      </div>
+    </section>
+
+    <!-- Penjualan -->
+    <section id="penjualan" class="card hidden">
+      <h2>🍱 Penjualan</h2>
+      <input id="produk" placeholder="Nama produk" />
+      <input id="hargaJual" type="number" placeholder="Harga satuan (Rp)" />
+      <input id="qty" type="number" placeholder="Quantity (Jumlah)" />
+      <button class="action" onclick="tambahJual()">Tambah</button>
+
+      <table id="tabelJual">
+        <tr><th>Tanggal</th><th>Nama Produk</th><th>Harga (Rp)</th><th>Qty</th><th>Total (Rp)</th><th>Aksi</th></tr>
+      </table>
+      <p><b>Total Penjualan:</b> Rp <span id="totalJual">0</span></p>
+      <button class="action" onclick="backToDashboard()">⬅ Kembali</button>
+    </section>
+
+    <!-- Pembelian -->
+    <section id="pembelian" class="card hidden">
+      <h2>🛒 Pembelian Bahan</h2>
+      <input id="bahan" placeholder="Nama bahan" />
+      <input id="hargaBahan" type="number" placeholder="Harga (Rp)" />
+      <button class="action" onclick="tambahBahan()">Tambah</button>
+
+      <table id="tabelBahan">
+        <tr><th>Tanggal</th><th>Nama Bahan</th><th>Harga (Rp)</th><th>Aksi</th></tr>
+      </table>
+      <p><b>Total Pembelian:</b> Rp <span id="totalBeli">0</span></p>
+      <button class="action" onclick="backToDashboard()">⬅ Kembali</button>
+    </section>
+
+    <!-- Saldo -->
+    <section id="saldo" class="card hidden">
+      <h2>💰 Saldo & Riwayat</h2>
+      <input id="tambahSaldo" type="number" placeholder="Tambah saldo (Rp)" />
+      <button class="action" onclick="tambahSaldoManual()">Tambah Saldo</button>
+      <div class="saldo">Saldo Sekarang: Rp <span id="saldoNow">0</span></div>
+
+      <h3>📅 Riwayat Saldo Harian</h3>
+      <table id="tabelRiwayat"><tr><th>Tanggal</th><th>Saldo (Rp)</th></tr></table>
+      <button class="action" onclick="backToDashboard()">⬅ Kembali</button>
+    </section>
+
+    <!-- Laporan -->
+    <section id="laporan" class="card hidden">
+      <h2>📊 Laporan</h2>
+      <label>Pilih tanggal (opsional):</label>
+      <input id="filterTanggal" type="date" onchange="renderLaporan()" />
+      <table id="tabelLaporan">
+        <tr><th>Tanggal</th><th>Jenis</th><th>Nama</th><th>Jumlah (Rp)</th></tr>
+      </table>
+      <p>
+        <b>Total Pembelian:</b> Rp <span id="lapBeli">0</span><br>
+        <b>Total Penjualan:</b> Rp <span id="lapJual">0</span><br>
+        <b>Laba Bersih:</b> Rp <span id="lapLaba">0</span>
+      </p>
+      <button class="action" onclick="exportExcel()">📤 Ekspor ke Excel</button>
+      <button class="action" onclick="exportPDF()">🖨️ Ekspor ke PDF</button>
+      <button class="action" onclick="backToDashboard()">⬅ Kembali</button>
+    </section>
+  </main>
+
+  <a href="https://wa.me/6282330079002" target="_blank" class="whatsapp-float" title="Chat WhatsApp">
+    <i class="fab fa-whatsapp" aria-hidden="true"></i>
+  </a>
+
+  <footer>
+    &copy; <span id="tahunNow"></span> Almer’s Food n Beverages
+  </footer>
+
+  <script>
+    // ===== Data load & init =====
+    let pembelian = JSON.parse(localStorage.getItem("pembelian")) || [];
+    let penjualan = JSON.parse(localStorage.getItem("penjualan")) || [];
+    let saldo = parseInt(localStorage.getItem("saldo")) || 0;
+    let riwayatSaldo = JSON.parse(localStorage.getItem("riwayatSaldo")) || [];
+
+    const simpanData = () => {
+      localStorage.setItem("pembelian", JSON.stringify(pembelian));
+      localStorage.setItem("penjualan", JSON.stringify(penjualan));
+      localStorage.setItem("saldo", saldo);
+      localStorage.setItem("riwayatSaldo", JSON.stringify(riwayatSaldo));
+    };
+
+    const formatRupiah = n => (Number(n) || 0).toLocaleString("id-ID");
+    const tanggalNow = () => {
+      const d = new Date();
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    };
+
+    // Fill footer year
+    document.getElementById('tahunNow').innerText = new Date().getFullYear();
+
+    // ===== Navigation =====
+    function showPage(id) {
+      document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      renderSemua();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function backToDashboard() {
+      document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+      document.getElementById("dashboard").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ===== Pembelian =====
+    function tambahBahan() {
+      const nama = document.getElementById("bahan").value.trim();
+      const harga = parseInt(document.getElementById("hargaBahan").value);
+      if (!nama || !harga || harga <= 0) return alert("Isi nama bahan dan harga yang valid!");
+      pembelian.push({ nama, harga, tanggal: tanggalNow() });
+      saldo -= harga;
+      simpanData(); catatRiwayat(); renderSemua();
+      document.getElementById("bahan").value = "";
+      document.getElementById("hargaBahan").value = "";
+    }
+
+    function renderPembelian() {
+      const t = document.getElementById("tabelBahan");
+      t.innerHTML = `<tr><th>Tanggal</th><th>Nama Bahan</th><th>Harga (Rp)</th><th>Aksi</th></tr>`;
+      let total = 0;
+      pembelian.forEach((x,i) => {
+        const r = t.insertRow();
+        r.insertCell(0).innerText = x.tanggal;
+        r.insertCell(1).innerText = x.nama;
+        r.insertCell(2).innerText = "Rp " + formatRupiah(x.harga);
+        const cellA = r.insertCell(3);
+        const btn = document.createElement('button');
+        btn.className = 'delete-btn'; btn.innerText = '🗑️';
+        btn.onclick = () => hapusPembelian(i);
+        cellA.appendChild(btn);
+        total += x.harga;
+      });
+      document.getElementById("totalBeli").innerText = formatRupiah(total);
+    }
+
+    function hapusPembelian(i) {
+      if (!confirm("Hapus pembelian ini?")) return;
+      saldo += pembelian[i].harga; // kembalikan saldo
+      pembelian.splice(i,1);
+      simpanData(); catatRiwayat(); renderSemua();
+    }
+
+    // ===== Penjualan =====
+    function tambahJual() {
+      const nama = document.getElementById("produk").value.trim();
+      const harga = parseInt(document.getElementById("hargaJual").value);
+      const qty = parseInt(document.getElementById("qty").value);
+      if (!nama || !harga || harga <= 0 || !qty || qty <= 0) return alert("Isi nama, harga, dan quantity yang valid!");
+      const total = harga * qty;
+      penjualan.push({ nama, harga, qty, tanggal: tanggalNow() });
+      saldo += total;
+      simpanData(); catatRiwayat(); renderSemua();
+      document.getElementById("produk").value = "";
+      document.getElementById("hargaJual").value = "";
+      document.getElementById("qty").value = "";
+    }
+
+    function renderPenjualan() {
+      const t = document.getElementById("tabelJual");
+      t.innerHTML = `<tr><th>Tanggal</th><th>Nama Produk</th><th>Harga (Rp)</th><th>Qty</th><th>Total (Rp)</th><th>Aksi</th></tr>`;
+      let total = 0;
+      penjualan.forEach((x,i) => {
+        const totalItem = x.harga * x.qty;
+        const r = t.insertRow();
+        r.insertCell(0).innerText = x.tanggal;
+        r.insertCell(1).innerText = x.nama;
+        r.insertCell(2).innerText = "Rp " + formatRupiah(x.harga);
+        r.insertCell(3).innerText = x.qty;
+        r.insertCell(4).innerText = "Rp " + formatRupiah(totalItem);
+        const cellA = r.insertCell(5);
+        const btn = document.createElement('button');
+        btn.className = 'delete-btn'; btn.innerText = '🗑️';
+        btn.onclick = () => hapusPenjualan(i, totalItem);
+        cellA.appendChild(btn);
+        total += totalItem;
+      });
+      document.getElementById("totalJual").innerText = formatRupiah(total);
+    }
+
+    function hapusPenjualan(i, totalItem) {
+      if (!confirm("Hapus penjualan ini?")) return;
+      saldo -= totalItem; // kurangi saldo karena batalkan penjualan
+      penjualan.splice(i,1);
+      simpanData(); catatRiwayat(); renderSemua();
+    }
+
+    // ===== Saldo & Riwayat =====
+    function tambahSaldoManual() {
+      const n = parseInt(document.getElementById("tambahSaldo").value);
+      if (!n || n <= 0) return alert("Isi nominal saldo yang valid!");
+      saldo += n;
+      simpanData(); catatRiwayat(); renderSemua();
+      document.getElementById("tambahSaldo").value = "";
+    }
+
+    function renderSaldo() {
+      document.getElementById("saldoNow").innerText = formatRupiah(saldo);
+      const t = document.getElementById("tabelRiwayat");
+      t.innerHTML = `<tr><th>Tanggal</th><th>Saldo (Rp)</th></tr>`;
+      // show newest first
+      riwayatSaldo.slice().reverse().forEach(x => {
+        const r = t.insertRow();
+        r.insertCell(0).innerText = x.tanggal;
+        r.insertCell(1).innerText = "Rp " + formatRupiah(x.saldo);
+      });
+    }
+
+    function catatRiwayat() {
+      const t = tanggalNow();
+      const existIdx = riwayatSaldo.findIndex(r => r.tanggal === t);
+      if (existIdx >= 0) riwayatSaldo[existIdx].saldo = saldo;
+      else riwayatSaldo.push({ tanggal: t, saldo });
+      simpanData();
+    }
+
+    // ===== Laporan =====
+    function ubahFormatTanggal(val) {
+      // val is yyyy-mm-dd -> return dd/mm/yyyy
+      if(!val) return "";
+      const [y,m,d] = val.split("-");
+      return `${d}/${m}/${y}`;
+    }
+
+    function renderLaporan() {
+      const filter = document.getElementById("filterTanggal").value; // yyyy-mm-dd or empty
+      const target = ubahFormatTanggal(filter);
+      const t = document.getElementById("tabelLaporan");
+      t.innerHTML = `<tr><th>Tanggal</th><th>Jenis</th><th>Nama</th><th>Jumlah (Rp)</th></tr>`;
+      let totalB = 0, totalJ = 0;
+      const data = [
+        ...pembelian.map(x => ({ ...x, jenis: "Pembelian", jumlah: x.harga })),
+        ...penjualan.map(x => ({ ...x, jenis: "Penjualan", jumlah: x.harga * x.qty }))
+      ];
+      data
+        .filter(x => !target || x.tanggal === target)
+        .forEach(x => {
+          const r = t.insertRow();
+          r.insertCell(0).innerText = x.tanggal;
+          r.insertCell(1).innerText = x.jenis;
+          r.insertCell(2).innerText = x.nama;
+          r.insertCell(3).innerText = "Rp " + formatRupiah(x.jumlah);
+          if (x.jenis === "Pembelian") totalB += x.jumlah; else totalJ += x.jumlah;
+        });
+      document.getElementById("lapBeli").innerText = formatRupiah(totalB);
+      document.getElementById("lapJual").innerText = formatRupiah(totalJ);
+      document.getElementById("lapLaba").innerText = formatRupiah(totalJ - totalB);
+    }
+
+    // ===== Export =====
+    function exportExcel() {
+      const data = [
+        ["Tanggal","Jenis","Nama","Jumlah (Rp)"],
+        ...pembelian.map(x => [x.tanggal, "Pembelian", x.nama, x.harga]),
+        ...penjualan.map(x => [x.tanggal, "Penjualan", x.nama, x.harga * x.qty])
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Laporan");
+      XLSX.writeFile(wb, `Laporan_Almers_${(new Date()).toISOString().slice(0,10)}.xlsx`);
+    }
+
+    function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p','pt','a4');
+      doc.setFontSize(14);
+      doc.text("Almer's Food n Beverages - Laporan", 40, 50);
+      doc.setFontSize(10);
+      doc.text("Tanggal cetak: " + tanggalNow(), 40, 70);
+
+      const data = [
+        ...pembelian.map(x => ({ tanggal: x.tanggal, jenis: "Pembelian", nama: x.nama, jumlah: x.harga })),
+        ...penjualan.map(x => ({ tanggal: x.tanggal, jenis: "Penjualan", nama: x.nama, jumlah: x.harga * x.qty }))
+      ];
+
+      let y = 100;
+      doc.setFontSize(10);
+      doc.text("Tanggal | Jenis | Nama | Jumlah (Rp)", 40, y);
+      y += 14;
+      data.forEach(row => {
+        if (y > 750) { doc.addPage(); y = 40; }
+        const line = `${row.tanggal} | ${row.jenis} | ${row.nama} | Rp ${formatRupiah(row.jumlah)}`;
+        doc.text(line, 40, y);
+        y += 12;
+      });
+      doc.save(`Laporan_Almers_${(new Date()).toISOString().slice(0,10)}.pdf`);
+    }
+
+    // ===== Render all =====
+    function renderSemua() {
+      renderPembelian();
+      renderPenjualan();
+      renderSaldo();
+      renderLaporan();
+    }
+
+    // initialize
+    renderSemua();
+
+    // expose for debugging (optional)
+    window._almers = { pembelian, penjualan, riwayatSaldo };
+  </script>
+</body>
+</html>
