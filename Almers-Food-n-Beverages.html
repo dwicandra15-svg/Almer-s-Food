@@ -1,397 +1,553 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Almer’s Food n Beverages</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Almer’s Food n Beverages</title>
 
-  <!-- Library -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <style>
-    :root {
-      --primary: #002B5B;
-      --secondary: #F77F00;
-      --light: #f6f9fc;
-      --text: #333;
-    }
-
-    body {
-      font-family: "Poppins", sans-serif;
-      background: var(--light);
-      color: var(--text);
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background: var(--primary);
-      color: white;
-      text-align: center;
-      padding: 15px 10px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.25);
-    }
-
-    header img {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      display: block;
-      margin: 0 auto 10px;
-      border: 3px solid var(--secondary);
-      object-fit: cover;
-      background: white;
-    }
-
-    header h1 {
-      font-size: 1.4rem;
-      margin: 0;
-      letter-spacing: 1px;
-      color: var(--secondary);
-    }
-
-    main {
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-      padding: 18px;
-      margin-bottom: 20px;
-    }
-
-    .menu {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-
-    button {
-      background: var(--secondary);
-      color: white;
-      font-size: 1.05em;
-      border: none;
-      border-radius: 10px;
-      padding: 14px;
-      cursor: pointer;
-      transition: transform .15s ease, background .15s ease;
-      font-weight: 700;
-    }
-
-    button:hover { transform: scale(1.03); background: #e56e00; }
-
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 6px 0;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-      box-sizing: border-box;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 8px;
-      font-size: 0.95em;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background: var(--primary);
-      color: #fff;
-      font-weight: 700;
-    }
-
-    .delete-btn {
-      background: #d00000;
-      color: white;
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .saldo {
-      text-align: center;
-      font-size: 1.15em;
-      font-weight: 700;
-      color: var(--primary);
-      margin-top: 14px;
-    }
-
-    .hidden { display: none; }
-
-    .whatsapp-float {
-      position: fixed;
-      width: 58px;
-      height: 58px;
-      bottom: 18px;
-      right: 18px;
-      background-color: #25D366;
-      color: white;
-      border-radius: 50%;
-      text-align: center;
-      font-size: 28px;
-      box-shadow: 2px 2px 6px rgba(0,0,0,0.25);
-      z-index: 999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    footer { text-align:center; color:#666; font-size:0.85rem; margin: 30px 0; }
-  </style>
+<style>
+:root {--primary:#002B5B;--secondary:#F77F00;--light:#f6f9fc;}
+body{font-family:Poppins;background:var(--light);margin:0;}
+header{background:var(--primary);color:white;text-align:center;padding:15px;}
+header img{width:90px;height:90px;border-radius:50%;border:3px solid var(--secondary);}
+main{padding:20px;max-width:1000px;margin:auto;}
+.card{background:white;padding:18px;border-radius:12px;margin-bottom:20px;}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;}
+button{background:var(--secondary);color:white;border:none;padding:14px;border-radius:10px;font-weight:700;}
+input,select{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px;}
+table{width:100%;border-collapse:collapse;margin-top:8px;}
+th,td{border:1px solid #ddd;padding:8px;}
+th{background:var(--primary);color:white;}
+.delete-btn{background:#d00000;color:white;border:none;padding:6px;border-radius:6px;}
+.hidden{display:none;}
+</style>
 </head>
+
 <body>
+<header>
+<img src="logo-almers.png" alt="Logo Almer's">
+<h1>Almer’s Food n Beverages</h1>
+</header>
 
-  <header>
-    <img src="logo-almers.png" alt="Logo Almer's Food n Beverages">
-    <h1>Almer’s Food n Beverages</h1>
-  </header>
+<main>
 
-  <main>
-    <section id="dashboard" class="card">
-      <h2>Dashboard</h2>
-      <div class="menu">
-        <button onclick="showPage('pembelian')">🛒 Pembelian</button>
-        <button onclick="showPage('penjualan')">🍱 Penjualan</button>
-        <button onclick="showPage('saldo')">💰 Saldo</button>
-        <button onclick="showPage('laporan')">📊 Laporan</button>
-      </div>
-    </section>
+<section id="dashboard" class="card">
+<h2>Dashboard</h2>
+<div class="menu">
+<button onclick="showPage('pembelian')">🛒 Pembelian</button>
+<button onclick="showPage('penjualan')">🍱 Penjualan</button>
+<button onclick="showPage('komposisi')">🍽️ Detail Komposisi</button>
+<button onclick="showPage('saldo')">💰 Saldo</button>
+<button onclick="showPage('laporan')">📊 Laporan</button>
+</div>
+</section>
+<!-- ========================= -->
+<!-- BAGIAN PEMBELIAN -->
+<!-- ========================= -->
 
-    <section id="pembelian" class="card hidden">
-      <h2>🛒 Pembelian Bahan</h2>
-      <input id="bahan" placeholder="Nama bahan" />
-      <input id="hargaBahan" type="number" placeholder="Harga (Rp)" />
-      <button onclick="tambahBahan()">Tambah</button>
-      <table id="tabelBahan"><tr><th>Tanggal</th><th>Nama</th><th>Harga</th><th>Aksi</th></tr></table>
-      <p><b>Total:</b> Rp <span id="totalBeli">0</span></p>
-      <button onclick="back()">⬅ Kembali</button>
-    </section>
+<section id="pembelian" class="card hidden">
+<h2>🛒 Pembelian</h2>
 
-    <section id="penjualan" class="card hidden">
-      <h2>🍱 Penjualan</h2>
-      <input id="produk" placeholder="Nama produk" />
-      <input id="hargaJual" type="number" placeholder="Harga satuan (Rp)" />
-      <input id="qty" type="number" placeholder="Quantity (Jumlah)" />
-      <button onclick="tambahJual()">Tambah</button>
-      <table id="tabelJual"><tr><th>Tanggal</th><th>Produk</th><th>Harga</th><th>Qty</th><th>Total</th><th>Aksi</th></tr></table>
-      <p><b>Total:</b> Rp <span id="totalJual">0</span></p>
-      <button onclick="back()">⬅ Kembali</button>
-    </section>
+<input id="bahan" placeholder="Nama bahan">
+<input id="hargaBahan" type="number" placeholder="Harga (Rp)">
 
-    <section id="saldo" class="card hidden">
-      <h2>💰 Saldo</h2>
-      <input id="tambahSaldo" type="number" placeholder="Tambah saldo (Rp)" />
-      <button onclick="tambahSaldoManual()">Tambah Saldo</button>
-      <div class="saldo">Saldo Sekarang: Rp <span id="saldoNow">0</span></div>
-      <table id="tabelRiwayat"><tr><th>Tanggal</th><th>Saldo</th><th>Aksi</th></tr></table>
-      <button onclick="back()">⬅ Kembali</button>
-    </section>
+<button onclick="tambahBahan()">Tambah</button>
 
-    <section id="laporan" class="card hidden">
-      <h2>📊 Laporan</h2>
-      <input type="date" id="filterTanggal" onchange="renderLaporan()" />
-      <table id="tabelLaporan"><tr><th>Tanggal</th><th>Jenis</th><th>Nama</th><th>Jumlah (Rp)</th></tr></table>
-      <p>
-        <b>Total Pembelian:</b> Rp <span id="lapBeli">0</span><br>
-        <b>Total Penjualan:</b> Rp <span id="lapJual">0</span><br>
-        <b>Laba Bersih:</b> Rp <span id="lapLaba">0</span>
-      </p>
-      <button onclick="exportExcel()">📤 Ekspor Excel</button>
-      <button onclick="exportPDF()">🖨️ Ekspor PDF</button>
-      <button onclick="back()">⬅ Kembali</button>
-    </section>
-  </main>
+<table id="tabelBahan">
+<tr>
+<th>Tanggal</th>
+<th>Nama</th>
+<th>Harga</th>
+<th>Aksi</th>
+</tr>
+</table>
 
-  <a href="https://wa.me/6282330079002" target="_blank" class="whatsapp-float"><i class="fab fa-whatsapp"></i></a>
+<p>Total: Rp <span id="totalBeli">0</span></p>
 
-  <footer>&copy; <span id="tahunNow"></span> Almer’s Food n Beverages</footer>
+<button onclick="back()">⬅ Kembali</button>
+</section>
 
+
+
+<!-- ========================= -->
+<!-- BAGIAN PENJUALAN -->
+<!-- ========================= -->
+
+<section id="penjualan" class="card hidden">
+<h2>🍱 Penjualan</h2>
+
+<input id="produk" placeholder="Nama produk">
+<input id="hargaJual" type="number" placeholder="Harga (Rp)">
+<input id="qty" type="number" placeholder="Qty">
+
+<button onclick="tambahJual()">Tambah</button>
+
+<table id="tabelJual">
+<tr>
+<th>Tanggal</th>
+<th>Produk</th>
+<th>Harga</th>
+<th>Qty</th>
+<th>Total</th>
+<th>Aksi</th>
+</tr>
+</table>
+
+<p>Total: Rp <span id="totalJual">0</span></p>
+
+<button onclick="back()">⬅ Kembali</button>
+</section>
+<!-- ========================= -->
+<!-- BAGIAN DETAIL KOMPOSISI -->
+<!-- ========================= -->
+
+<section id="komposisi" class="card hidden">
+<h2>🍽️ Detail Komposisi</h2>
+
+<input id="kom_menu" placeholder="Nama menu">
+<input id="kom_catatan" placeholder="Catatan (opsional)">
+
+<label>Nasi / Bihun / None</label>
+<select id="kom_karbo">
+<option value="Nasi">Nasi</option>
+<option value="Bihun">Bihun</option>
+<option value="None">None</option>
+</select>
+
+<input id="kom_karbo_gram" type="number" placeholder="Gram karbo">
+
+<label>Kuah (Soto / Capcay / None)</label>
+<select id="kom_kuah">
+<option value="Soto">Soto</option>
+<option value="Capcay">Capcay</option>
+<option value="None">None</option>
+</select>
+
+<input id="kom_kuah_gram" type="number" placeholder="Gram kuah">
+
+<input id="kom_harga" type="number" placeholder="Harga (Rp)">
+
+<button onclick="tambahKomposisi()">Simpan Komposisi</button>
+
+<table id="tabelKomposisi">
+<tr>
+<th>Tanggal</th>
+<th>Menu</th>
+<th>Karbo</th>
+<th>Gram</th>
+<th>Kuah</th>
+<th>Gram</th>
+<th>Harga</th>
+<th>Catatan</th>
+<th>Aksi</th>
+</tr>
+</table>
+
+<button onclick="back()">⬅ Kembali</button>
+</section>
+
+
+
+<!-- ========================= -->
+<!-- BAGIAN SALDO -->
+<!-- ========================= -->
+
+<section id="saldo" class="card hidden">
+<h2>💰 Saldo</h2>
+
+<input id="tambahSaldo" type="number" placeholder="Tambah saldo (Rp)">
+<button onclick="tambahSaldoManual()">Tambah Saldo</button>
+
+<p>Saldo Sekarang: Rp <span id="saldoNow">0</span></p>
+
+<table id="tabelRiwayat">
+<tr>
+<th>Tanggal</th>
+<th>Saldo</th>
+<th>Aksi</th>
+</tr>
+</table>
+
+<button onclick="back()">⬅ Kembali</button>
+</section>
+
+
+
+<!-- ========================= -->
+<!-- BAGIAN LAPORAN -->
+<!-- ========================= -->
+
+<section id="laporan" class="card hidden">
+<h2>📊 Laporan</h2>
+
+<input type="date" id="filterTanggal" onchange="renderLaporan()">
+
+<table id="tabelLaporan">
+<tr>
+<th>Tanggal</th>
+<th>Jenis</th>
+<th>Nama</th>
+<th>Jumlah</th>
+</tr>
+</table>
+
+<p>
+Pembelian: Rp <span id="lapBeli">0</span><br>
+Penjualan: Rp <span id="lapJual">0</span><br>
+Saldo Masuk: Rp <span id="lapSaldoMasuk">0</span><br>
+Laba Bersih: Rp <span id="lapLaba">0</span>
+</p>
+
+<button onclick="exportExcel()">📤 Excel</button>
+<button onclick="exportPDF()">🖨️ PDF</button>
+<button onclick="back()">⬅ Kembali</button>
+</section>
+
+</main>
 <script>
-  let pembelian = JSON.parse(localStorage.getItem("pembelian")) || [];
-  let penjualan = JSON.parse(localStorage.getItem("penjualan")) || [];
-  let saldo = parseInt(localStorage.getItem("saldo")) || 0;
-  let riwayatSaldo = JSON.parse(localStorage.getItem("riwayatSaldo")) || [];
+/* ===========================
+   INISIALISASI DATA
+=========================== */
+let pembelian = JSON.parse(localStorage.getItem("pembelian")) || [];
+let penjualan = JSON.parse(localStorage.getItem("penjualan")) || [];
+let saldo = parseInt(localStorage.getItem("saldo")) || 0;
+let riwayatSaldo = JSON.parse(localStorage.getItem("riwayatSaldo")) || [];
+let saldoMasuk = JSON.parse(localStorage.getItem("saldoMasuk")) || [];
+let detailKomposisi = JSON.parse(localStorage.getItem("detailKomposisi")) || [];
 
-  const simpanData = () => {
+const simpanData = () => {
     localStorage.setItem("pembelian", JSON.stringify(pembelian));
     localStorage.setItem("penjualan", JSON.stringify(penjualan));
     localStorage.setItem("saldo", saldo);
     localStorage.setItem("riwayatSaldo", JSON.stringify(riwayatSaldo));
-  };
+    localStorage.setItem("saldoMasuk", JSON.stringify(saldoMasuk));
+    localStorage.setItem("detailKomposisi", JSON.stringify(detailKomposisi));
+};
 
-  const formatRupiah = n => (Number(n) || 0).toLocaleString("id-ID");
-  const tgl = () => {
-    const d = new Date();
-    return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-  };
+const formatRupiah = n => (Number(n) || 0).toLocaleString("id-ID");
 
-  document.getElementById("tahunNow").innerText = new Date().getFullYear();
+const tgl = () => {
+    let d = new Date();
+    return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`;
+};
 
-  function showPage(id) {
-    document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+/* ===========================
+   NAVIGASI
+=========================== */
+function showPage(id){
+    document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
     document.getElementById(id).classList.remove("hidden");
     render();
-  }
-
-  function back() {
-    document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-    document.getElementById("dashboard").classList.remove("hidden");
-  }
-
-  // === Pembelian ===
-  function tambahBahan() {
-    const nama=document.getElementById("bahan").value;
-    const harga=parseInt(document.getElementById("hargaBahan").value);
-    if(!nama||!harga)return alert("Lengkapi data!");
-    pembelian.push({nama,harga,tanggal:tgl()});
-    saldo-=harga; simpanData(); catat(); render();
-    document.getElementById("bahan").value=""; document.getElementById("hargaBahan").value="";
-  }
-
-  function renderPembelian() {
-    const t=document.getElementById("tabelBahan");
-    t.innerHTML="<tr><th>Tanggal</th><th>Nama</th><th>Harga</th><th>Aksi</th></tr>";
-    let total=0;
-    pembelian.forEach((x,i)=>{
-      const r=t.insertRow(); r.insertCell(0).innerText=x.tanggal;
-      r.insertCell(1).innerText=x.nama; r.insertCell(2).innerText="Rp "+formatRupiah(x.harga);
-      const aksi=r.insertCell(3); const btn=document.createElement("button");
-      btn.className="delete-btn"; btn.innerText="🗑️"; btn.onclick=()=>hapusBeli(i);
-      aksi.appendChild(btn); total+=x.harga;
-    });
-    document.getElementById("totalBeli").innerText=formatRupiah(total);
-  }
-
-  function hapusBeli(i){if(!confirm("Hapus data ini?"))return; saldo+=pembelian[i].harga; pembelian.splice(i,1); simpanData();catat();render();}
-
-  // === Penjualan ===
-  function tambahJual(){
-    const nama=document.getElementById("produk").value;
-    const harga=parseInt(document.getElementById("hargaJual").value);
-    const qty=parseInt(document.getElementById("qty").value);
-    if(!nama||!harga||!qty)return alert("Lengkapi semua!");
-    const total=harga*qty; penjualan.push({nama,harga,qty,tanggal:tgl()});
-    saldo+=total; simpanData(); catat(); render();
-    document.getElementById("produk").value=""; document.getElementById("hargaJual").value=""; document.getElementById("qty").value="";
-  }
-
-  function renderPenjualan(){
-    const t=document.getElementById("tabelJual");
-    t.innerHTML="<tr><th>Tanggal</th><th>Produk</th><th>Harga</th><th>Qty</th><th>Total</th><th>Aksi</th></tr>";
-    let total=0;
-    penjualan.forEach((x,i)=>{
-      const totalItem=x.harga*x.qty;
-      const r=t.insertRow(); r.insertCell(0).innerText=x.tanggal;
-      r.insertCell(1).innerText=x.nama; r.insertCell(2).innerText="Rp "+formatRupiah(x.harga);
-      r.insertCell(3).innerText=x.qty; r.insertCell(4).innerText="Rp "+formatRupiah(totalItem);
-      const aksi=r.insertCell(5); const btn=document.createElement("button");
-      btn.className="delete-btn"; btn.innerText="🗑️"; btn.onclick=()=>hapusJual(i,totalItem);
-      aksi.appendChild(btn); total+=totalItem;
-    });
-    document.getElementById("totalJual").innerText=formatRupiah(total);
-  }
-
-  function hapusJual(i,totalItem){if(!confirm("Hapus data ini?"))return; saldo-=totalItem; penjualan.splice(i,1); simpanData();catat();render();}
-
-  // === Saldo ===
-  function tambahSaldoManual(){
-    const n=parseInt(document.getElementById("tambahSaldo").value);
-    if(!n)return alert("Isi nominal!");
-    saldo+=n; simpanData(); catat(); render();
-    document.getElementById("tambahSaldo").value="";
-  }
-
-  function renderSaldo(){
-    document.getElementById("saldoNow").innerText=formatRupiah(saldo);
-    const t=document.getElementById("tabelRiwayat");
-    t.innerHTML="<tr><th>Tanggal</th><th>Saldo</th><th>Aksi</th></tr>";
-    riwayatSaldo.slice().reverse().forEach((x,i)=>{
-      const r=t.insertRow();
-      r.insertCell(0).innerText=x.tanggal;
-      r.insertCell(1).innerText="Rp "+formatRupiah(x.saldo);
-      const aksi=r.insertCell(2);
-      const btn=document.createElement("button");
-      btn.className="delete-btn"; btn.innerText="🗑️";
-      btn.onclick=()=>hapusRiwayat(riwayatSaldo.length-1-i);
-      aksi.appendChild(btn);
-    });
-  }
-
-  function hapusRiwayat(i){if(!confirm("Hapus riwayat ini?"))return; riwayatSaldo.splice(i,1); simpanData(); renderSaldo();}
-
-  function catat(){
-    const t=tgl();
-    const idx=riwayatSaldo.findIndex(r=>r.tanggal===t);
-    if(idx>=0)riwayatSaldo[idx].saldo=saldo; else riwayatSaldo.push({tanggal:t,saldo});
-    simpanData();
-  }
-
-  // === Laporan ===
-  function renderLaporan(){
-    const f=document.getElementById("filterTanggal").value;
-    const t=document.getElementById("tabelLaporan");
-    t.innerHTML="<tr><th>Tanggal</th><th>Jenis</th><th>Nama</th><th>Jumlah (Rp)</th></tr>";
-    let totalB=0,totalJ=0;
-    const all=[...pembelian.map(x=>({...x,jenis:"Pembelian"})),...penjualan.map(x=>({...x,jenis:"Penjualan"}))];
-    all.forEach(x=>{
-      if(f){
-        const [d,m,y]=x.tanggal.split("/");
-        const iso=`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
-        if(f!==iso)return;
-      }
-      const r=t.insertRow();
-      r.insertCell(0).innerText=x.tanggal;
-      r.insertCell(1).innerText=x.jenis;
-      r.insertCell(2).innerText=x.nama;
-      r.insertCell(3).innerText="Rp "+formatRupiah(x.jenis==="Penjualan"?(x.harga*x.qty):x.harga);
-      if(x.jenis==="Penjualan")totalJ+=(x.harga*x.qty); else totalB+=x.harga;
-    });
-    document.getElementById("lapBeli").innerText=formatRupiah(totalB);
-    document.getElementById("lapJual").innerText=formatRupiah(totalJ);
-    document.getElementById("lapLaba").innerText=formatRupiah(totalJ-totalB);
-  }
-
-  function exportExcel(){
-    const wb=XLSX.utils.table_to_book(document.getElementById("tabelLaporan"));
-    XLSX.writeFile(wb,"Laporan_Almers.xlsx");
-  }
-
-  function exportPDF(){
-    const {jsPDF}=window.jspdf;
-    const doc=new jsPDF();
-    doc.text("Laporan Almer’s Food n Beverages",14,15);
-    doc.autoTable({html:"#tabelLaporan",startY:25});
-    doc.save("Laporan_Almers.pdf");
-  }
-
-  function render() {
-  renderPembelian();
-  renderPenjualan();
-  renderSaldo();
-  renderLaporan();
 }
 
-// Jalankan otomatis ketika halaman sudah dimuat
-document.addEventListener("DOMContentLoaded", () => {
-  render();
-  console.log("✅ Aplikasi Almer’s Food n Beverages siap digunakan!");
-});
+function back(){
+    document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+    document.getElementById("dashboard").classList.remove("hidden");
+}
+
+/* ===========================
+   PEMBELIAN
+=========================== */
+function tambahBahan(){
+    const nama = document.getElementById("bahan").value.trim();
+    const harga = parseInt(document.getElementById("hargaBahan").value) || 0;
+
+    if(!nama || harga <= 0) return alert("Isi nama bahan dan harga!");
+
+    pembelian.push({nama, harga, tanggal: tgl()});
+    saldo -= harga;
+
+    simpanData(); catat(); render();
+
+    document.getElementById("bahan").value = "";
+    document.getElementById("hargaBahan").value = "";
+}
+
+function renderPembelian(){
+    const t = document.getElementById("tabelBahan");
+    t.innerHTML = `
+    <tr>
+        <th>Tanggal</th>
+        <th>Nama</th>
+        <th>Harga</th>
+        <th>Aksi</th>
+    </tr>`;
+
+    let total = 0;
+
+    pembelian.forEach((x,i)=>{
+        const r = t.insertRow();
+        r.insertCell(0).innerText = x.tanggal;
+        r.insertCell(1).innerText = x.nama;
+        r.insertCell(2).innerText = "Rp " + formatRupiah(x.harga);
+        r.insertCell(3).innerHTML = `<button class="delete-btn" onclick="hapusBeli(${i})">🗑️</button>`;
+        total += x.harga;
+    });
+
+    document.getElementById("totalBeli").innerText = formatRupiah(total);
+}
+
+function hapusBeli(i){
+    if(!confirm("Hapus pembelian?")) return;
+    saldo += pembelian[i].harga;
+    pembelian.splice(i,1);
+    simpanData(); catat(); render();
+}
+
+/* ===========================
+   PENJUALAN (FIX)
+=========================== */
+function tambahJual(){
+    const nama = document.getElementById("produk").value.trim();
+    const harga = parseInt(document.getElementById("hargaJual").value) || 0;
+    const qty   = parseInt(document.getElementById("qty").value) || 0;
+
+    if(!nama || harga <= 0 || qty <= 0)
+        return alert("Isi semua data penjualan dengan benar!");
+
+    const total = harga * qty;
+
+    penjualan.push({nama, harga, qty, tanggal: tgl()});
+    saldo += total;
+
+    simpanData(); catat(); render();
+
+    document.getElementById("produk").value = "";
+    document.getElementById("hargaJual").value = "";
+    document.getElementById("qty").value = "";
+}
+
+function renderPenjualan(){
+    const t = document.getElementById("tabelJual");
+
+    t.innerHTML = `
+    <tr>
+        <th>Tanggal</th>
+        <th>Produk</th>
+        <th>Harga</th>
+        <th>Qty</th>
+        <th>Total</th>
+        <th>Aksi</th>
+    </tr>`;
+
+    let total = 0;
+
+    penjualan.forEach((x,i)=>{
+        const tot = x.harga * x.qty;
+        const r = t.insertRow();
+        r.insertCell(0).innerText = x.tanggal;
+        r.insertCell(1).innerText = x.nama;
+        r.insertCell(2).innerText = "Rp " + formatRupiah(x.harga);
+        r.insertCell(3).innerText = x.qty;
+        r.insertCell(4).innerText = "Rp " + formatRupiah(tot);
+        r.insertCell(5).innerHTML =
+            `<button class="delete-btn" onclick="hapusJual(${i}, ${tot})">🗑️</button>`;
+        total += tot;
+    });
+
+    document.getElementById("totalJual").innerText = formatRupiah(total);
+}
+
+function hapusJual(i, total){
+    if(!confirm("Hapus penjualan?")) return;
+    saldo -= total;
+    penjualan.splice(i,1);
+    simpanData(); catat(); render();
+}
+
+/* ===========================
+   DETAIL KOMPOSISI
+=========================== */
+
+function tambahKomposisi(){
+    const menu = document.getElementById("kom_menu").value.trim();
+    const catatan = document.getElementById("kom_catatan").value.trim();
+    const karbo = document.getElementById("kom_karbo").value;
+    const karboGram = parseInt(document.getElementById("kom_karbo_gram").value) || 0;
+    const kuah = document.getElementById("kom_kuah").value;
+    const kuahGram = parseInt(document.getElementById("kom_kuah_gram").value) || 0;
+    const harga = parseInt(document.getElementById("kom_harga").value) || 0;
+
+    if(!menu) return alert("Nama menu wajib!");
+
+    detailKomposisi.push({
+        tanggal: tgl(),
+        menu, catatan,
+        karbo, karboGram,
+        kuah, kuahGram,
+        harga
+    });
+
+    simpanData(); renderKomposisi();
+
+    document.getElementById("kom_menu").value = "";
+    document.getElementById("kom_catatan").value = "";
+    document.getElementById("kom_karbo_gram").value = "";
+    document.getElementById("kom_kuah_gram").value = "";
+    document.getElementById("kom_harga").value = "";
+}
+
+function renderKomposisi(){
+    const t = document.getElementById("tabelKomposisi");
+    t.innerHTML = `
+    <tr>
+        <th>Tanggal</th>
+        <th>Menu</th>
+        <th>Karbo</th>
+        <th>Gram</th>
+        <th>Kuah</th>
+        <th>Gram</th>
+        <th>Harga</th>
+        <th>Catatan</th>
+        <th>Aksi</th>
+    </tr>`;
+
+    detailKomposisi.forEach((x,i)=>{
+        const r = t.insertRow();
+        r.insertCell(0).innerText = x.tanggal;
+        r.insertCell(1).innerText = x.menu;
+        r.insertCell(2).innerText = x.karbo;
+        r.insertCell(3).innerText = x.karboGram + " g";
+        r.insertCell(4).innerText = x.kuah;
+        r.insertCell(5).innerText = x.kuahGram + " g";
+        r.insertCell(6).innerText = "Rp " + formatRupiah(x.harga);
+        r.insertCell(7).innerText = x.catatan || "-";
+        r.insertCell(8).innerHTML =
+            `<button class="delete-btn" onclick="hapusKomposisi(${i})">🗑️</button>`;
+    });
+}
+
+function hapusKomposisi(i){
+    if(!confirm("Hapus komposisi?")) return;
+    detailKomposisi.splice(i,1);
+    simpanData(); renderKomposisi();
+}
+
+/* ===========================
+   SALDO
+=========================== */
+function tambahSaldoManual(){
+    const n = parseInt(document.getElementById("tambahSaldo").value) || 0;
+    if(!n) return alert("Isi jumlah saldo!");
+
+    saldo += n;
+    saldoMasuk.push({tanggal: tgl(), nominal: n});
+    simpanData(); catat(); render();
+
+    document.getElementById("tambahSaldo").value = "";
+}
+
+function renderSaldo(){
+    document.getElementById("saldoNow").innerText = formatRupiah(saldo);
+
+    const t = document.getElementById("tabelRiwayat");
+    t.innerHTML = `
+    <tr>
+        <th>Tanggal</th>
+        <th>Saldo</th>
+        <th>Aksi</th>
+    </tr>`;
+
+    riwayatSaldo.slice().reverse().forEach((x,i)=>{
+        const r = t.insertRow();
+        r.insertCell(0).innerText = x.tanggal;
+        r.insertCell(1).innerText = "Rp " + formatRupiah(x.saldo);
+        r.insertCell(2).innerHTML =
+            `<button class="delete-btn" onclick="hapusRiwayat(${riwayatSaldo.length-1-i})">🗑️</button>`;
+    });
+}
+
+function hapusRiwayat(i){
+    if(!confirm("Hapus riwayat saldo?")) return;
+    riwayatSaldo.splice(i,1);
+    simpanData(); renderSaldo();
+}
+
+function catat(){
+    const today = tgl();
+    const idx = riwayatSaldo.findIndex(x => x.tanggal === today);
+    if(idx >= 0) riwayatSaldo[idx].saldo = saldo;
+    else riwayatSaldo.push({tanggal: today, saldo});
+    simpanData();
+}
+
+/* ===========================
+   LAPORAN
+=========================== */
+function renderLaporan(){
+    const t = document.getElementById("tabelLaporan");
+    const f = document.getElementById("filterTanggal").value;
+
+    t.innerHTML = `
+    <tr>
+        <th>Tanggal</th>
+        <th>Jenis</th>
+        <th>Nama</th>
+        <th>Jumlah</th>
+    </tr>`;
+
+    let totalB = 0, totalJ = 0, totalS = 0;
+
+    const all = [
+        ...pembelian.map(x => ({tanggal:x.tanggal, jenis:"Pembelian", nama:x.nama, jumlah:x.harga})),
+        ...penjualan.map(x => ({tanggal:x.tanggal, jenis:"Penjualan", nama:x.nama, jumlah:x.harga*x.qty})),
+        ...saldoMasuk.map(x => ({tanggal:x.tanggal, jenis:"Saldo Masuk", nama:"Tambah Saldo", jumlah:x.nominal}))
+    ];
+
+    all.forEach(x => {
+        if(f){
+            const [d,m,y] = x.tanggal.split("/");
+            const iso = `${y}-${m}-${d}`;
+            if(iso !== f) return;
+        }
+
+        const r = t.insertRow();
+        r.insertCell(0).innerText = x.tanggal;
+        r.insertCell(1).innerText = x.jenis;
+        r.insertCell(2).innerText = x.nama;
+        r.insertCell(3).innerText = "Rp " + formatRupiah(x.jumlah);
+
+        if(x.jenis === "Pembelian") totalB += x.jumlah;
+        else if(x.jenis === "Penjualan") totalJ += x.jumlah;
+        else totalS += x.jumlah;
+    });
+
+    document.getElementById("lapBeli").innerText = formatRupiah(totalB);
+    document.getElementById("lapJual").innerText = formatRupiah(totalJ);
+    document.getElementById("lapSaldoMasuk").innerText = formatRupiah(totalS);
+    document.getElementById("lapLaba").innerText = formatRupiah(totalJ + totalS - totalB);
+}
+
+function exportExcel(){
+    const wb = XLSX.utils.table_to_book(document.getElementById("tabelLaporan"));
+    XLSX.writeFile(wb,"Laporan_Almers.xlsx");
+}
+
+function exportPDF(){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.text("Laporan Almer’s Food n Beverages", 14, 10);
+    if(doc.autoTable) doc.autoTable({ html:"#tabelLaporan", startY: 20 });
+
+    doc.save("Laporan_Almers.pdf");
+}
+
+/* ===========================
+   RENDER AWAL
+=========================== */
+function render(){
+    renderPembelian();
+    renderPenjualan();
+    renderSaldo();
+    renderLaporan();
+    renderKomposisi();
+}
 </script>
+
 </body>
 </html>
